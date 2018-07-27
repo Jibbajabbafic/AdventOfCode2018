@@ -17,7 +17,7 @@ def solution(n, x, r):
             a.add(this_bomb)
             groups.append(a)
 
-    return len(groups)
+    return len(groups)*10000
 
 def bombs_in_range(bomb, bombs, strengths):
     bomb_pos = bombs[bomb]
