@@ -1,28 +1,85 @@
 # Please write your code inside the function stub below.
 
+import bisect
+
 def solution(n, m, r, c, k):
-    # x_spaces = calc_spaces(r)
-    # y_spaces = calc_spaces(c)
 
-    rooms = []
+    sorted_rooms = []
+    
+    total_rooms = (len(r)-1) * (len(c)-1)
+    print("Total rooms: ", total_rooms)
+    if k > total_rooms/2:
+        print("Finding largest rooms...")
+        K = 1 + total_rooms - k
 
-    for i, x in enumerate(r):
-        print("x: ", i, x)
-        for j, y in enumerate(c):
-            print("y: ", j, y)
-            if i > 0 and j > 0:
-                diff_x = x - r[i-1] - 1
-                diff_y = y - c[j-1] - 1
-                rooms.append(diff_x * diff_y)
-    # print(rooms)
-    rooms.sort()
-    return(rooms[k-1])
+        last_x = None
+        last_y = None
 
-# def calc_spaces(walls):
-#     spaces = []
-#     for i, wall in enumerate(walls):
-#         if i+1 < len(walls):
-#             spaces.append(walls[i+1] - wall - 1)
-#     return(spaces)
+        for x in r:
+
+            if last_x == None:
+                last_x = x
+                continue
+
+            if x != last_x:
+                diff_x = x - last_x - 1
+
+            for y in c:
+                if last_y == None:
+                    last_y = y
+                else:
+                    if y != last_y:
+                        diff_y = y - last_y - 1
+
+                    area = diff_x * diff_y
+
+                    if len(sorted_rooms) < K:
+                        # list is still shorter than K so add value automatically and keep list sorted
+                        bisect.insort(sorted_rooms, area)
+                    elif sorted_rooms[0] < area:
+                            # smallest value in list is smaller than area, so get rid and add new sorted value
+                            del sorted_rooms[0]
+                            bisect.insort(sorted_rooms, area)
+
+                    last_y = y
+            last_x = x
+        return(sorted_rooms[0])
+    else:
+        # find kth smallest values
+        print("Finding smallest rooms...")
+
+        last_x = None
+        last_y = None
+
+        for x in r:
+
+            if last_x == None:
+                last_x = x
+                continue
+
+            if x != last_x:
+                diff_x = x - last_x
+
+            for y in c:
+                
+                if last_y == None:
+                    last_y = y
+
+                if y != last_y:
+                    diff_y = y - last_y
+
+                area = diff_x * diff_y
+
+                if len(sorted_rooms) < k:
+                    # list is still shorter than k so add value automatically and keep list sorted
+                    bisect.insort(sorted_rooms, area)
+                elif sorted_rooms[k-1] > area:
+                        # largest value in list is greater than area, so get rid and add new sorted value
+                        del sorted_rooms[k-1]
+                        bisect.insort(sorted_rooms, area)
+
+                last_y = y
+            last_x = x
+        return(sorted_rooms[k-1])
 
 # print(solution(5, 5, (2, 4), (2, 4), 1))
